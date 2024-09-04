@@ -12,7 +12,11 @@ endif
 ########## Build kernel module based on local DLKM flag status ##########
 # Build NFC kernel driver
 ifeq ($(NFC_DLKM_ENABLED), true)
-ifeq ($(call is-board-platform-in-list, pineapple),true)
+ifeq ($(call is-board-platform-in-list, pineapple volcano),true)
   BOARD_VENDOR_KERNEL_MODULES += $(KERNEL_MODULES_OUT)/stm_nfc_i2c.ko
 endif
+endif
+
+ifeq ($(call is-board-platform-in-list, blair pitti volcano),true)
+TARGET_ENABLE_PERIPHERAL_CONTROL := false
 endif

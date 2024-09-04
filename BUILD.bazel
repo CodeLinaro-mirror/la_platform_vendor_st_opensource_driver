@@ -3,3 +3,6 @@ load(":define_modules.bzl", "define_modules")
 
 define_modules("pineapple", "consolidate")
 define_modules("pineapple", "gki")
+
+define_modules("volcano", "consolidate")
+define_modules("volcano", "gki")

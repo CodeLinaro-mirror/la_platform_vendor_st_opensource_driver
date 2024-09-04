@@ -6,7 +6,7 @@
  * Copyright (C) 2010 Trusted Logic S.A.
  */
 /*
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
 */
 
 #define DEBUG
@@ -46,6 +46,7 @@
 #include "st_uapi.h"
 #include <linux/version.h>
 
+#ifdef NFC_SECURE_PERIPHERAL_ENABLED
 /*secure library headers*/
 #include "smcinvoke_object.h"
 #include "IClientEnv.h"
@@ -56,6 +57,7 @@
 #define HW_NFC_UID 0x506
 #define FEATURE_NOT_SUPPORTED 12
 #define PERIPHERAL_NOT_FOUND 10
+#endif
 
 // Uncomment this to check CLF response during probe
 // #define WITH_PING_DURING_PROBE
@@ -79,7 +81,9 @@
 
 #define I2C_ID_NAME "st21nfc"
 
+#ifdef NFC_SECURE_PERIPHERAL_ENABLED
 static bool init_flag;
+#endif
 static bool enable_debug_log;
 
 /*The enum is used to index a pw_states array, the values matter here*/
@@ -617,6 +621,7 @@ void st21nfc_unregister_st54spi_cb(void)
 	st21nfc_st54spi_data = NULL;
 }
 
+#ifdef NFC_SECURE_PERIPHERAL_ENABLED
 /**
  * nfc_dynamic_protection_ioctl() - dynamic protection control
  * @nfc_dev:    nfc device data structure
@@ -728,7 +733,7 @@ exit_release_clientenv:
 
 	return  retstat;
 }
-
+#endif
 static long st21nfc_dev_ioctl(struct file *filp, unsigned int cmd,
 			      unsigned long arg)
 {
@@ -756,13 +761,14 @@ static long st21nfc_dev_ioctl(struct file *filp, unsigned int cmd,
 	if (ret)
 		return -EFAULT;
 
+#ifdef NFC_SECURE_PERIPHERAL_ENABLED
 	if(st21nfc_dev->secure_zone) {
 		if(cmd!=NFC_SECURE_ZONE) {
 			pr_debug("Func nfc_dev_ioctl failed\n");
 			return -1;
 		}
 	}
-
+#endif
 	switch (cmd) {
 	case ST21NFC_SET_POLARITY_RISING:
 	case ST21NFC_LEGACY_SET_POLARITY_RISING:
@@ -898,11 +904,11 @@ static long st21nfc_dev_ioctl(struct file *filp, unsigned int cmd,
 		if (enable_debug_log)
 			pr_debug("%s use ESE %d : %d\n", __func__, ret, tmp);
 		break;
-
+#ifdef NFC_SECURE_PERIPHERAL_ENABLED
 	case NFC_SECURE_ZONE:
 		ret = nfc_dynamic_protection_ioctl(st21nfc_dev, arg);
 		break;
-
+#endif
 	default:
 		pr_err("%s bad ioctl %u\n", __func__, cmd);
 		ret = -EINVAL;
@@ -1306,6 +1312,7 @@ static int st21nfc_probe(struct i2c_client *client,
 		return -ENODEV;
 	}
 
+#ifdef NFC_SECURE_PERIPHERAL_ENABLED
 	/*Check NFC Secure Zone status*/
 	if(!nfc_hw_secure_check()) {
 		// QTI and MTK54 use standard GPIO definition
@@ -1320,7 +1327,15 @@ static int st21nfc_probe(struct i2c_client *client,
 		st21nfc_dev->secure_zone = true;
 		init_flag = true;
 	}
-
+#else
+	// QTI and MTK54 use standard GPIO definition
+	st21nfc_dev->gpiod_reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+	if (IS_ERR_OR_NULL(st21nfc_dev->gpiod_reset)) {
+		pr_warn("%s : Unable to request reset-gpios\n", __func__);
+		return -ENODEV;
+	}
+	st21nfc_dev->secure_zone = false;
+#endif
 	pr_info("%s:st21nfc_dev->secure_zone = %s", __func__, st21nfc_dev->secure_zone ? "true" : "false");
 
 // QCOM and MTK54 use standard GPIO definition
