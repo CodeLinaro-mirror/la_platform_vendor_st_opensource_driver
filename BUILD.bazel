@@ -6,3 +6,5 @@ define_modules("sun", "perf")
 define_modules("canoe", "consolidate")
 define_modules("canoe", "perf")
 
+define_modules("lahaina", "consolidate")
+define_modules("lahaina", "perf")
