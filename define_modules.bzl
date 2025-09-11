@@ -1,5 +1,6 @@
 load("//build/kernel/kleaf:kernel.bzl", "ddk_module")
-load("//build/bazel_common_rules/dist:dist.bzl", "copy_to_dist_dir")
+load("@rules_pkg//pkg:install.bzl", "pkg_install")
+load("@rules_pkg//pkg:mappings.bzl", "pkg_files", "strip_prefix")
 
 def define_modules(target, variant):
     tv = "{}_{}".format(target, variant)
@@ -53,12 +54,15 @@ def define_modules(target, variant):
         visibility = ["//visibility:public"],
     )
 
-    copy_to_dist_dir(
+    pkg_files(
+        name = tv + "_dist_files",
+        srcs = [":{}_stm_nfc_i2c".format(tv)],
+        visibility = ["//visibility:private"],
+        strip_prefix = strip_prefix.files_only(),
+    )
+
+    pkg_install(
         name = "{}_stm_nfc_i2c_dist".format(tv),
-        data = [":{}_stm_nfc_i2c".format(tv)],
-        dist_dir = "out/target/product/{}/dlkm/lib/modules/".format(target),
-        flat = True,
-        wipe_dist_dir = False,
-        allow_duplicate_filenames = False,
-        mode_overrides = {"**/*": "644"},
+        srcs = [":{}_dist_files".format(tv)],
+        destdir = "out/target/product/{}/dlkm/lib/modules/".format(target),
     )
