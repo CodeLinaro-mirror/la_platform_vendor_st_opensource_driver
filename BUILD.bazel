@@ -8,3 +8,6 @@ define_modules("canoe", "perf")
 
 define_modules("lahaina", "consolidate")
 define_modules("lahaina", "perf")
+
+define_modules("art", "consolidate")
+define_modules("art", "perf")
