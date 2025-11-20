@@ -23,6 +23,9 @@ def define_modules(target, variant):
             "//vendor/qcom/opensource/securemsm-kernel:{}_smcinvoke_dlkm".format(tv),
         ]
 
+    if target == "malabar":
+        copts.append("-DCONFIG_NFC_BOB1")
+
     if target == "canoe":
         copts.append("-DCONFIG_NFC_BOB1")
         copts.append("-DNFC_SECURE_PERIPHERAL_ENABLED")

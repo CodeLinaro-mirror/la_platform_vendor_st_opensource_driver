@@ -7,6 +7,9 @@ define_modules("sun", "perf")
 define_modules("canoe", "consolidate")
 define_modules("canoe", "perf")
 
+define_modules("malabar", "consolidate")
+define_modules("malabar", "perf")
+
 define_modules("lahaina", "consolidate")
 define_modules("lahaina", "perf")
 
