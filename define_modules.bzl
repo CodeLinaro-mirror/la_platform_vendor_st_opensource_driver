@@ -6,15 +6,15 @@ def define_modules(target, variant):
 
     copts = []
     deps = select({
-        "//build/kernel/kleaf:socrepo_true": [
+        "//build/qcom_build_extensions:qtisocrepo_true": [
             "//soc-repo:all_headers",
             "//soc-repo:{}/drivers/pinctrl/qcom/pinctrl-msm".format(tv),
         ],
-        "//build/kernel/kleaf:socrepo_false": ["//msm-kernel:all_headers"],
+        "//build/qcom_build_extensions:qtisocrepo_false": ["//msm-kernel:all_headers"],
     })
     kernel_build = select({
-        "//build/kernel/kleaf:socrepo_true": "//soc-repo:{}_base_kernel".format(tv),
-        "//build/kernel/kleaf:socrepo_false": "//msm-kernel:{}".format(tv),
+        "//build/qcom_build_extensions:qtisocrepo_true": "//soc-repo:{}_base_kernel".format(tv),
+        "//build/qcom_build_extensions:qtisocrepo_false": "//msm-kernel:{}".format(tv),
     })
     if target == "sun":
         copts.append("-DNFC_SECURE_PERIPHERAL_ENABLED")
@@ -30,6 +30,9 @@ def define_modules(target, variant):
             "//vendor/qcom/opensource/securemsm-kernel:smcinvoke_kernel_headers",
             "//vendor/qcom/opensource/securemsm-kernel:{}_smcinvoke_dlkm".format(tv),
         ]
+
+    if target == "chora":
+        copts.append("-DCONFIG_NFC_BOB1")
 
     ddk_module(
         name = "{}_stm_nfc_i2c".format(tv),
