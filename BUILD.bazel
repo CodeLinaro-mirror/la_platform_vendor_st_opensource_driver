@@ -11,3 +11,6 @@ define_modules("lahaina", "perf")
 
 define_modules("art", "consolidate")
 define_modules("art", "perf")
+
+define_modules("art16k", "consolidate")
+define_modules("art16k", "perf")
