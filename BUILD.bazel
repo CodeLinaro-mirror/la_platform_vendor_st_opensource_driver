@@ -18,3 +18,6 @@ define_modules("parrot", "perf")
 
 define_modules("chora", "consolidate")
 define_modules("chora", "perf")
+
+define_modules("bengal", "consolidate")
+define_modules("bengal", "perf")
