@@ -14,3 +14,6 @@ define_modules("art", "perf")
 
 define_modules("art16k", "consolidate")
 define_modules("art16k", "perf")
+
+define_modules("parrot", "consolidate")
+define_modules("parrot", "perf")
