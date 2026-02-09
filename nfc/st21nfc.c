@@ -192,7 +192,7 @@ struct st21nfc_device {
 };
 
 #ifdef CONFIG_NFC_BOB1
-void st21nfc_bob1_set(struct st21nfc_device *st21nfc_dev, unsigned char arg)
+static void st21nfc_bob1_set(struct st21nfc_device *st21nfc_dev, unsigned char arg)
 {
 	int rc = 0;
 	u8 *buf;
