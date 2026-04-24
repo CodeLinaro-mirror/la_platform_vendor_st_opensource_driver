@@ -61,8 +61,8 @@
 #endif
 
 // Uncomment this to check CLF response during probe
-// #define WITH_PING_DURING_PROBE
-// #define RECOVERY_SUPPORT_IN_PING
+#define WITH_PING_DURING_PROBE
+#define RECOVERY_SUPPORT_IN_PING
 
 
 #define MAX_BUFFER_SIZE 260
@@ -86,7 +86,7 @@
 static bool init_flag;
 #endif
 
-static bool enable_debug_log;
+static bool enable_debug_log = true;
 
 /*The enum is used to index a pw_states array, the values matter here*/
 enum st21nfc_power_state {
@@ -1075,7 +1075,7 @@ static unsigned int st21nfc_poll(struct file *file, poll_table *wait)
 static int st21nfc_ping(struct st21nfc_device *st21nfc_dev)
 {
 	int ret = -ENODEV;
-	int loops = 4;
+	int loops = 100;
 
 	if (st21nfc_dev->device_open) {
 		ret = -EBUSY;
@@ -1110,6 +1110,7 @@ static int st21nfc_ping(struct st21nfc_device *st21nfc_dev)
 			pr_warn("%s Could not read header: %d\n", __func__,
 				len);
 			/* retry read */
+			msleep(100);
 		}
 		else
 		{
@@ -1170,10 +1171,14 @@ static int st21nfc_ping(struct st21nfc_device *st21nfc_dev)
 					break;
 				}
 			}
-			pr_info("%s Read message (%d bytes): %02x %02x %02x %02x ...\n", __func__,
-				len + 3, st21nfc_dev->buffer[0], st21nfc_dev->buffer[1],
-				st21nfc_dev->buffer[2], st21nfc_dev->buffer[3] );
+			int i;
 
+			pr_info("%s Read message (%d bytes): ", __func__, len + 3);
+
+			for (i = 0; i < len + 3; i++)
+				pr_cont("%02x ", st21nfc_dev->buffer[i]);
+
+			pr_cont("\n");
 			if (st21nfc_dev->buffer[0] == 0x60 &&
 				st21nfc_dev->buffer[1] == 0x00) {
 				ret = 0;

@@ -17,3 +17,6 @@ define_modules("art16k", "perf")
 
 define_modules("parrot", "consolidate")
 define_modules("parrot", "perf")
+
+define_modules("kera-le", "consolidate")
+define_modules("kera-le", "perf")
