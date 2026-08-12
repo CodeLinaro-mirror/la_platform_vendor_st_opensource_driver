@@ -556,7 +556,7 @@ static ssize_t st21nfc_dev_read(struct file *filp, char __user *buf,
 	mutex_lock(&st21nfc_dev->read_mutex);
 
 	/* Read data */
-	ret = i2c_master_recv(st21nfc_dev->client, st21nfc_dev->buffer, count);
+	ret = i2c_master_recv_dmasafe(st21nfc_dev->client, st21nfc_dev->buffer, count);
 #ifdef ST54J_PWRSTATS
 	if (ret < 0) {
 		pr_err("%s: i2c_master_recv returned %d\n", __func__, ret);
