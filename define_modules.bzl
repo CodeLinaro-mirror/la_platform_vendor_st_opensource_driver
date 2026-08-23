@@ -37,6 +37,9 @@ def define_modules(target, variant):
     if target == "bengal":
         copts.append("-DNFC_CLK_REQ_GPIO_WAKEUP")
 
+    if target == "waipio":
+        copts.append("-DNFC_CLK_REQ_GPIO_WAKEUP")
+
     if target == "chora":
         copts.append("-DCONFIG_NFC_BOB1")
 
